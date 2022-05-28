@@ -1,0 +1,16 @@
+#tool_wrapper{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: start;
+  width: 90vh;
+  height: 90vh;
+  margin: auto;
+}
+#control_panel {
+  width: 10%;
+}
+#draw_panel {
+  width: 90%;
+  border: 1px solid lightgray;
+}

@@ -2,22 +2,29 @@ const IMAGE = (function(i){
   let canvas = null,
     ctx = null,
     img_input = null,
-    print_button = null;
+    export_button = null;
 
-  i.init = function(ctx){
-    ctx = ctx;
+  i.init = function(context){
+    ctx = context;
     canvas = ctx.canvas;
-    i.init_file_upload_handlers();
-    i.init_print_button();
+    init_file_upload_handlers();
+    init_export_button();
   };
 
-  i.init_print_button = function(){
-    print_button = document.getElementById("print");
-    print_button.addEventListener("click", function(e){
-      const win=window.open();
-      win.document.write("<br><img src='" + canvas.toDataURL("image/jpeg", 0.75) +"'/>");
-      win.print();
-      win.location.reload();
+  const random = function(){
+    return (Math.random() + 1).toString(36).substring(7);
+  };
+
+  const init_export_button = function(){
+    export_button = document.getElementById("export");
+    export_button.addEventListener("click", function(e){
+      const $link = document.createElement('a');
+      $link.href = "" + canvas.toDataURL('image/png');
+      $link.download = `vector-logic-${random()}.png`;
+      $link.style.display = "none";
+      document.body.appendChild($link);
+      $link.click();
+      document.body.removeChild($link);
     });
   };
 
@@ -33,7 +40,7 @@ const IMAGE = (function(i){
       horizontal_offset, vertical_offset, image.width*ratio, image.height*ratio);
   };
 
-  i.init_file_upload_handlers = function(){
+  const init_file_upload_handlers = function(){
     img_input = document.getElementById("image_upload");
     img_input.addEventListener('change', function(e) {
       if(e.target.files) {

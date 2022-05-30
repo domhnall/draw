@@ -22,13 +22,57 @@
   </head>
 
   <body>
-    <!-- your content here... -->
     <div id="tool_wrapper">
       <div id="control_panel">
-        <input type="file" id="image_upload" accept = "image/*">
+        <div class="control_panel_section">
+          <div class="control_option">
+            <label>
+              <div>Select a background image:</div>
+              <input type="file" id="image_upload" accept="image/*">
+            </label>
+          </div>
+        </div>
+
+        <div class="control_panel_section">
+          <div class="control_option">
+            <label>
+              <div>Line width:</div>
+              <select name="line_width" id="line_width">
+                <option value="1">Thin (default)</option>
+                <option value="2">Normal</option>
+                <option value="5">Thick</option>
+                <option value="10">Very thick</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="control_option">
+            <label>
+              <div>Line colour:</div>
+              <select name="line_colour" id="line_colour">
+                <option value="black">Black</option>
+                <option value="white">White</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="control_panel_section">
+          <div class="control_option">
+            <button class="btn" id="print">Print</button>
+          </div>
+
+          <div class="control_option">
+            <button class="btn btn-danger" id="reset">Clear</button>
+          </div>
+        </div>
       </div>
       <canvas id="draw_panel"></canvas>
     </div>
+    <script src="js/image.js"></script>
     <script src="js/draw.js"></script>
   </body>
 </html>

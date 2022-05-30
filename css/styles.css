@@ -1,16 +1,74 @@
 #tool_wrapper{
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-around;
-  align-items: start;
-  width: 90vh;
-  height: 90vh;
-  margin: auto;
+  align-items: stretch;
+  width: 100%;
 }
 #control_panel {
-  width: 10%;
+  width: 15%;
 }
 #draw_panel {
-  width: 90%;
   border: 1px solid lightgray;
+  width: 80%;
+  height: 100vh;
+}
+
+button, input[type=file] {
+  all: unset;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.3em 1.2em;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 2em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  color: #FFFFFF;
+  background-color: #4EB5F1;
+  text-align: center;
+  transition: all 0.2s;
+}
+.btn:hover {
+  background-color: #4095C6;
+  cursor: pointer;
+}
+@media all and (max-width: 30em) {
+  .btn {
+    display: block;
+    margin: 0.2em auto;
+  }
+}
+.btn-danger {
+  background-color: #FF4444;
+}
+.btn-danger:hover {
+  background-color: #FF9999;
+}
+
+#control_panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.control_panel_section {
+  margin: 1em 0;
+  border-bottom: 1px dashed lightgrey;
+}
+
+.control_option {
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.control_option select, .control_option input, .control_option button {
+  width: 100%;
+  line-height: 1.5;
+  font-size: 110%;
+  margin: 0.2em auto;
 }

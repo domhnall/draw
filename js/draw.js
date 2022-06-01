@@ -1,5 +1,7 @@
 const DRAW = (function(d){
-  class Point {
+
+  // Point class to represent (x,y) and convert to canvas coordinates
+  window.Point = class Point {
     constructor(x, y, canvas) {
       this.x = x;
       this.y = y;
@@ -21,7 +23,8 @@ const DRAW = (function(d){
     }
   };
 
-  const throttle = function(func, wait = 50) {
+  // Utilities
+  window.throttle = function(func, wait = 50) {
     let timer = null;
     return function(...args) {
       if (timer === null) {
@@ -33,6 +36,79 @@ const DRAW = (function(d){
     };
   };
 
+
+
+  // Set up shared state and handler functions for canvas drawing events
+  // Shared state
+  let p = null,
+    drawing = false;
+
+  // Handler functions
+  const line_to = function(point){
+    d.ctx.lineTo(point.canvas_x, point.canvas_y);
+    d.ctx.stroke();
+  };
+
+  const move_to = function(point){
+    d.ctx.moveTo(point.canvas_x, point.canvas_y);
+    d.ctx.beginPath();
+  };
+
+  const touchstart = function(event){
+    event.preventDefault();
+    if (event.targetTouches.length == 1) {
+      const touch = event.targetTouches[0];
+      p.x = touch.pageX;
+      p.y = touch.pageY;
+      move_to(p);
+    }
+  };
+
+  const touchmove = throttle(function(event){
+    event.preventDefault();
+    if (event.targetTouches.length == 1) {
+      const touch = event.targetTouches[0];
+      p.x = touch.pageX;
+      p.y = touch.pageY;
+      line_to(p);
+    }
+  }, 50);
+
+  const mousedown = function(event){
+    event.preventDefault();
+    drawing = true;
+    p.x = event.pageX;
+    p.y = event.pageY;
+    move_to(p);
+  };
+
+  const mousemove = throttle(function(event){
+    event.preventDefault();
+    if(!drawing){
+      return;
+    }
+    p.x = event.pageX;
+    p.y = event.pageY;
+    line_to(p);
+  }, 50);
+
+  const mouseup = function(event){
+    event.preventDefault();
+    drawing = false;
+  };
+
+  const toggle_drawing_handlers = function(on) {
+    const method = on ? d.canvas.addEventListener : d.canvas.removeEventListener;
+
+    // Handling touch events
+    method('touchstart', touchstart, false);
+    method('touchmove', touchmove, false);
+
+    // Handling mouse events
+    method('mousedown', mousedown, false);
+    method('mousemove', mousemove, false);
+    method('mouseup', mouseup);
+  };
 
   const init_style_button_handlers = function(){
     const $line_width_btn = document.getElementById("line_width"),
@@ -55,65 +131,17 @@ const DRAW = (function(d){
     });
   };
 
-  const line_to = function(point){
-    d.ctx.lineTo(point.canvas_x, point.canvas_y);
-    d.ctx.stroke();
-  };
+  const init_draw_tool = function(){
+    const $draw_tool_btn = document.getElementById("draw_tool_btn");
 
-  const move_to = function(point){
-    d.ctx.moveTo(point.canvas_x, point.canvas_y);
-    d.ctx.beginPath();
-  };
+    $draw_tool_btn.addEventListener("click", function(e){
+      const $target = e.target,
+        active = (e.target.dataset.active==="true");
 
-  const init_canvas_handlers = function() {
-    let p = new Point(0, 0, d.canvas),
-      clicking = false;
-
-    // Handling touch events
-    d.canvas.addEventListener('touchstart', function(event){
-      event.preventDefault();
-      if (event.targetTouches.length == 1) {
-        const touch = event.targetTouches[0];
-        p.x = touch.pageX;
-        p.y = touch.pageY;
-        move_to(p);
-      }
-    }, false);
-
-    d.canvas.addEventListener('touchmove', throttle(function(event){
-      event.preventDefault();
-      if (event.targetTouches.length == 1) {
-        const touch = event.targetTouches[0];
-        p.x = touch.pageX;
-        p.y = touch.pageY;
-        line_to(p);
-      }
-    }, 50), false);
-
-    // Handling mouse events
-    d.canvas.addEventListener('mousedown', function(event){
-      event.preventDefault();
-      clicking = true;
-      p.x = event.pageX;
-      p.y = event.pageY;
-      move_to(p);
-    }, false);
-
-    d.canvas.addEventListener('mousemove', throttle(function(event){
-      event.preventDefault();
-      if(!clicking){
-        return;
-      }
-      p.x = event.pageX;
-      p.y = event.pageY;
-      line_to(p);
-    }, 50), false);
-
-    d.canvas.addEventListener('mouseup', function(event){
-      event.preventDefault();
-      clicking = false;
+      $target.dataset.active = !active;
+      toggle_drawing_handlers(!active);
     });
-  };
+  }
 
   d.canvas = null;
   d.ctx = null;
@@ -129,8 +157,14 @@ const DRAW = (function(d){
       .replace(/px$/, '');
     d.ctx = this.canvas.getContext('2d');
 
-    init_canvas_handlers();
+    // Initialize touch point state
+    p = new Point(0,0,d.canvas)
+
+    init_draw_tool();
     init_style_button_handlers();
+    if(typeof window.ERASER !== "undefined"){
+      window.ERASER.init(d.ctx);
+    }
   };
 
   return d;

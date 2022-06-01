@@ -72,3 +72,6 @@ button, input[type=file] {
   font-size: 110%;
   margin: 0.2em auto;
 }
+.btn.tool-btn[data-active="true"] {
+  border: 2px solid black;
+}

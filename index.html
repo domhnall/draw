@@ -25,6 +25,7 @@
     <div id="tool_wrapper">
       <div id="control_panel">
         <div class="control_panel_section">
+          <h3>Background</h3>
           <div class="control_option">
             <label>
               <div>Select a background image:</div>
@@ -34,6 +35,7 @@
         </div>
 
         <div class="control_panel_section">
+          <h3>Line styles</h3>
           <div class="control_option">
             <label>
               <div>Line width:</div>
@@ -61,6 +63,16 @@
         </div>
 
         <div class="control_panel_section">
+          <h3>Tools</h3>
+          <div class="control_option">
+            <button class="btn tool-btn" id="draw_tool_btn" data-active="false">&#9998;&#x270E;</button>
+            <button class="btn tool-btn" id="erase_tool_btn" data-active="false">Eraser</button>
+            <button class="btn tool-btn" id="rect_tool_btn" data-active="false">Rectangle</button>
+            <button class="btn tool-btn" id="ell_tool_btn" data-active="false">Ellipse</button>
+          </div>
+        </div>
+
+        <div class="control_panel_section">
           <div class="control_option">
             <button class="btn" id="export">Export PNG</button>
           </div>
@@ -72,7 +84,8 @@
       </div>
       <canvas id="draw_panel"></canvas>
     </div>
-    <script src="js/image.js"></script>
     <script src="js/draw.js"></script>
+    <script src="js/image.js"></script>
+    <script src="js/eraser.js"></script>
   </body>
 </html>

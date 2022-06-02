@@ -1,4 +1,4 @@
-const IMAGE = (function(i){
+window.IMAGE = (function(i){
   let canvas = null,
     ctx = null,
     img_input = null,

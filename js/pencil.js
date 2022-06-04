@@ -19,6 +19,7 @@ window.PENCIL = (function(pencil){
   const touchstart = function(event){
     event.preventDefault();
     if (event.targetTouches.length == 1) {
+      drawing = true;
       const touch = event.targetTouches[0];
       p.x = touch.pageX;
       p.y = touch.pageY;
@@ -30,6 +31,9 @@ window.PENCIL = (function(pencil){
     event.preventDefault();
     if (event.targetTouches.length == 1) {
       const touch = event.targetTouches[0];
+      if(!drawing){
+        return;
+      }
       p.x = touch.pageX;
       p.y = touch.pageY;
       line_to(p);

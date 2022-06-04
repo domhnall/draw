@@ -68,7 +68,7 @@
             <button class="btn tool-btn" id="draw_tool_btn" data-active="false">&#9998;&#x270E;</button>
             <button class="btn tool-btn" id="erase_tool_btn" data-active="false">Eraser</button>
             <button class="btn tool-btn" id="rect_tool_btn" data-active="false">Rectangle</button>
-            <button class="btn tool-btn" id="ell_tool_btn" data-active="false">Ellipse</button>
+            <button class="btn tool-btn" id="selector_tool_btn" data-active="false">Selector</button>
           </div>
         </div>
 
@@ -82,11 +82,14 @@
           </div>
         </div>
       </div>
-      <canvas id="draw_panel"></canvas>
+      <div id="draw_panel_wrapper">
+        <canvas id="draw_panel"></canvas>
+      </div>
     </div>
     <script src="js/page.js"></script>
     <script src="js/image.js"></script>
     <script src="js/eraser.js"></script>
     <script src="js/pencil.js"></script>
+    <script src="js/shape.js"></script>
   </body>
 </html>

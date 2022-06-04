@@ -15,7 +15,7 @@ window.PAGE = (function(page){
     });
     $reset_btn.addEventListener("click", function(e){
       if(confirm("This will completely clear your work on the canvas. You cannot undo. Are you sure?")){
-        page.ctx.clearRect(0, 0, d.canvas.width, d.canvas.height);
+        page.ctx.clearRect(0, 0, page.canvas.width, page.canvas.height);
         //if(d.img_input){
         //  d.img_input.value = null;
         //}
@@ -35,9 +35,6 @@ window.PAGE = (function(page){
       .replace(/px$/, '');
     page.ctx = this.canvas.getContext('2d');
 
-    // Initialize touch point state
-    //p = new Point(0, 0, d.canvas)
-
     init_global_button_handlers();
     if(typeof window.PENCIL !== "undefined"){
       window.PENCIL.init(page.ctx);
@@ -47,6 +44,12 @@ window.PAGE = (function(page){
     }
     if(typeof window.ERASER !== "undefined"){
       window.ERASER.init(page.ctx);
+    }
+    if(typeof window.SHAPE !== "undefined"){
+      window.SHAPE.init(page.ctx);
+    }
+    if(typeof window.SELECTOR !== "undefined"){
+      window.SELECTOR.init(page.ctx);
     }
   };
 
@@ -67,12 +70,20 @@ window.Point = class Point {
       .replace(/px$/, '');
   }
 
+  get canvas_position() {
+    const client_rect = this.canvas.getBoundingClientRect();
+    return {
+      left: this.canvas.offsetParent.offsetLeft,
+      top: this.canvas.offsetParent.offsetTop
+    };
+  }
+
   get canvas_x(){
-    return (this.x - this.canvas.offsetLeft)*this.canvas.width/this.css_width;
+    return (this.x - this.canvas_position.left)*this.canvas.width/this.css_width;
   }
 
   get canvas_y(){
-    return (this.y - this.canvas.offsetTop)*this.canvas.height/this.css_height;
+    return (this.y - this.canvas_position.top)*this.canvas.height/this.css_height;
   }
 };
 

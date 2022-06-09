@@ -16,6 +16,11 @@ window.PAGE = (function(page){
     $reset_btn.addEventListener("click", function(e){
       if(confirm("This will completely clear your work on the canvas. You cannot undo. Are you sure?")){
         page.ctx.clearRect(0, 0, page.canvas.width, page.canvas.height);
+        document.querySelectorAll("canvas").forEach(function($canvas){
+          if($canvas.getAttribute("id")!==page.canvas.getAttribute("id")){
+            $canvas.parentNode.removeChild($canvas);
+          }
+        });
         //if(d.img_input){
         //  d.img_input.value = null;
         //}

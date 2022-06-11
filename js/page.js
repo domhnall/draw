@@ -53,9 +53,6 @@ window.PAGE = (function(page){
     if(typeof window.SHAPE !== "undefined"){
       window.SHAPE.init(page.ctx);
     }
-    if(typeof window.SELECTOR !== "undefined"){
-      window.SELECTOR.init(page.ctx);
-    }
   };
 
   return page;

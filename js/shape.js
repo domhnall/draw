@@ -15,16 +15,14 @@ window.SHAPE =(function(s){
     all_rectangles.push(rect.draw());
   };
 
-  const resize_rect = function(event){
-    console.log("Resizing");
-  };
-
   const shape_mouseup = function(event){
+    if(event.target.classList.contains("tool-btn")){
+      return;
+    }
     event.preventDefault();
     p.x = event.pageX;
     p.y = event.pageY;
     if(dragging){
-      resize_rect(event);
       dragging = false;
     }else{
       drop_rect(p)

@@ -69,6 +69,7 @@ window.PENCIL = (function(pencil){
     // Handling touch events
     method('touchstart', touchstart, false);
     method('touchmove', touchmove, false);
+    method('touchend', mouseup);
 
     // Handling mouse events
     method('mousedown', mousedown, false);

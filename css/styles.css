@@ -76,12 +76,45 @@ button, input[type=file] {
   display: flex;
   flex-direction: column;
 }
+#tools .control_option {
+  flex-direction: row;
+}
 
 .control_option select, .control_option input, .control_option button {
   width: 100%;
   line-height: 1.5;
   font-size: 110%;
   margin: 0.2em auto;
+}
+.btn.tool-btn {
+  appearance: none;
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgb(27 31 35 / 4%) 0 1px 0, rgb(255 255 255 / 25%) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 2rem;
+  font-weight: 500;
+  list-style: none;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+  max-width: 1.5em;
+  padding: 0;
+}
+.btn.tool-btn:hover {
+  background-color: #F3F4F6;
+  text-decoration: none;
+  transition-duration: 0.1s;
 }
 .btn.tool-btn[data-active="true"] {
   border: 2px solid black;

@@ -26,6 +26,20 @@ window.PAGE = (function(page){
         //}
       }
     });
+
+    // Clicking anywhere outstide of canvas should deactivate currently active tool
+    document.getElementById("tool_wrapper").addEventListener("click", function(event){
+      const $target = event.target;
+      if(page.canvas.contains($target)){
+        return;
+      }
+      // Disable active buttons
+      document.querySelectorAll("#control_panel .tool-btn[data-active=\"true\"]").forEach(function($btn){
+        if($btn!==$target){
+          $btn.click();
+        }
+      });
+    });
   };
 
 

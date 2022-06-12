@@ -87,12 +87,6 @@ window.PENCIL = (function(pencil){
     document.getElementById("draw_tool_btn").addEventListener("click", function(e){
       const $target = e.target,
         active = (e.target.dataset.active==="true");
-
-      document.querySelectorAll("#control_panel .tool-btn[data-active=\"true\"]").forEach(function($btn){
-        if($btn!==$target){
-          $btn.click();
-        }
-      });
       $target.dataset.active = !active;
       toggle_drawing_handlers(!active);
     });

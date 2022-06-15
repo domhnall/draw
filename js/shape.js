@@ -3,7 +3,6 @@ window.SHAPE =(function(s){
   let ctx = null,
     canvas = null,
     p = null,
-    dragging = false,
     all_rectangles = [],
     shifted = false;
 
@@ -16,17 +15,10 @@ window.SHAPE =(function(s){
   };
 
   const shape_mouseup = function(event){
-    if(event.target.closest(".tool-btn")){
-      return;
-    }
     event.preventDefault();
     p.x = event.pageX;
     p.y = event.pageY;
-    if(dragging){
-      dragging = false;
-    }else{
-      drop_rect(p)
-    }
+    drop_rect(p)
   };
 
   const toggle_shape_handlers = function(on) {
@@ -47,18 +39,18 @@ window.SHAPE =(function(s){
     // Initialize touch point state
     p = new Point(0, 0, canvas)
 
-    document.getElementById("rect_tool_btn").addEventListener("click", function(e){
-      const $target = e.currentTarget,
+    document.getElementById("rect_tool_btn").addEventListener("click", throttle(function(e){
+      const $target = e.target.closest(".tool-btn"),
         active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_shape_handlers(!active);
-    });
-    document.getElementById("selector_tool_btn").addEventListener("click", function(e){
-      const $target = e.currentTarget,
+    }, 50));
+    document.getElementById("selector_tool_btn").addEventListener("click", throttle(function(e){
+      const $target = e.target.closest(".tool-btn"),
         active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_selector_handlers(!active);
-    });
+    }, 50));
     document.addEventListener("keyup", function(event){
       if(event.keyCode===8 || event.keyCode===46){
         for(const [i,rect] of all_rectangles.entries()){

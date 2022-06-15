@@ -87,7 +87,6 @@ window.Point = class Point {
   }
 
   get canvas_position() {
-    const client_rect = this.canvas.getBoundingClientRect();
     return {
       left: this.canvas.offsetParent.offsetLeft,
       top: this.canvas.offsetParent.offsetTop

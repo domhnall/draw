@@ -16,7 +16,7 @@ window.SHAPE =(function(s){
   };
 
   const shape_mouseup = function(event){
-    if(event.target.classList.contains("tool-btn")){
+    if(event.target.closest(".tool-btn")){
       return;
     }
     event.preventDefault();
@@ -31,7 +31,7 @@ window.SHAPE =(function(s){
 
   const toggle_shape_handlers = function(on) {
     const method = on ? canvas.addEventListener : canvas.removeEventListener;
-    method('mouseup', shape_mouseup);
+    method.call(canvas, 'mouseup', shape_mouseup);
   };
 
   const toggle_selector_handlers = function(on){
@@ -48,36 +48,25 @@ window.SHAPE =(function(s){
     p = new Point(0, 0, canvas)
 
     document.getElementById("rect_tool_btn").addEventListener("click", function(e){
-      const $target = e.target,
-        active = (e.target.dataset.active==="true");
-
-      document.querySelectorAll("#control_panel .tool-btn[data-active=\"true\"]").forEach(function($btn){
-        if($btn!==$target){
-          $btn.click();
-        }
-      });
+      const $target = e.currentTarget,
+        active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_shape_handlers(!active);
     });
     document.getElementById("selector_tool_btn").addEventListener("click", function(e){
-      const $target = e.target,
-        active = (e.target.dataset.active==="true");
-
-      document.querySelectorAll("#control_panel .tool-btn[data-active=\"true\"]").forEach(function($btn){
-        if($btn!==$target){
-          $btn.click();
-        }
-      });
+      const $target = e.currentTarget,
+        active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_selector_handlers(!active);
     });
     document.addEventListener("keyup", function(event){
       if(event.keyCode===8 || event.keyCode===46){
-        all_rectangles.forEach(function(rect){
+        for(const [i,rect] of all_rectangles.entries()){
           if(rect.is_active){
             rect.destroy();
+            all_rectangles.splice(i,1);
           }
-        });
+        }
       }
     });
   }

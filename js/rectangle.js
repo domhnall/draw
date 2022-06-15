@@ -64,6 +64,8 @@ class Rectangle {
 class DraggableRectangle extends Rectangle {
   constructor({x, y, width, height, canvas}={}) {
     super({x: x, y: y, width: width, height: height, canvas: canvas});
+    this.throttled_mousemove = throttle(this.mousemove.bind(this), 50);
+    this.throttled_touchmove = throttle(this.touchmove.bind(this), 50);
     this.dragging = false;
   }
 
@@ -95,11 +97,12 @@ class DraggableRectangle extends Rectangle {
     const method = on ? this.canvas.addEventListener : this.canvas.removeEventListener;
     // Handling touch events
     method('touchstart', this.touchstart.bind(this), false);
-    method('touchmove', throttle(this.touchmove.bind(this), 50), false);
+    method('touchmove', this.throttled_touchmove.bind(this));
 
     // Handling mouse events
     method('mousedown', this.mousedown.bind(this), false);
-    method('mousemove', throttle(this.mousemove.bind(this), 50), false);
+    method('mousemove', this.throttled_mousemove.bind(this));
+
     method('mouseup', this.mouseup.bind(this));
   }
 
@@ -258,6 +261,11 @@ class ResizableDraggableRectangle extends DraggableRectangle {
   clear(){
     this.clear_drag_handles();
     super.clear();
+  }
+
+  destroy(){
+    this.destroy_drag_handles();
+    super.destroy();
   }
 
   destroy_drag_handles(){

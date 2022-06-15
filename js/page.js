@@ -30,7 +30,7 @@ window.PAGE = (function(page){
     // Clicking anywhere outstide of canvas should deactivate currently active tool
     document.getElementById("tool_wrapper").addEventListener("click", function(event){
       const $target = event.target;
-      if(page.canvas.contains($target)){
+      if(page.canvas.parentNode.contains($target)){
         return;
       }
       // Disable active buttons

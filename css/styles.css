@@ -17,6 +17,10 @@
   position: relative;
 }
 
+canvas#draw_panel {
+  z-index: 1;
+}
+
 #tool_wrapper canvas {
   width: 100%;
   height: 100%;
@@ -80,6 +84,10 @@ button, input[type=file] {
   flex-direction: row;
 }
 
+#tools .control_option {
+  flex-direction: row;
+}
+
 .control_option select, .control_option input, .control_option button {
   width: 100%;
   line-height: 1.5;
@@ -118,4 +126,7 @@ button, input[type=file] {
 }
 .btn.tool-btn[data-active="true"] {
   border: 2px solid black;
+}
+.btn.tool-btn .hand_pointer {
+  transform: rotate(-0.125turn);
 }

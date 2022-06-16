@@ -78,18 +78,19 @@ window.Point = class Point {
     this.x = x;
     this.y = y;
     this.canvas = canvas;
-    this.css_width = window.getComputedStyle(PAGE.canvas, null)
+    this.css_width = window.getComputedStyle(canvas, null)
       .getPropertyValue("width")
       .replace(/px$/, '');
-    this.css_height = window.getComputedStyle(PAGE.canvas, null)
+    this.css_height = window.getComputedStyle(canvas, null)
       .getPropertyValue("height")
       .replace(/px$/, '');
   }
 
   get canvas_position() {
-    return {
-      left: this.canvas.offsetParent.offsetLeft,
-      top: this.canvas.offsetParent.offsetTop
+    const $offset_parent = this.canvas.offsetParent;
+    return this._canvas_position ||= {
+      left: $offset_parent ? $offset_parent.offsetLeft : 30,
+      top: $offset_parent ? $offset_parent.offsetTop : 8
     };
   }
 

@@ -64,14 +64,17 @@ class Rectangle {
 class DraggableRectangle extends Rectangle {
   constructor({x, y, width, height, canvas}={}) {
     super({x: x, y: y, width: width, height: height, canvas: canvas});
-    this.throttled_mousemove = throttle(this.mousemove.bind(this), 50);
-    this.throttled_touchmove = throttle(this.touchmove.bind(this), 50);
+    this.mousemove = throttle(this._mousemove.bind(this), 50);
+    this.touchmove = throttle(this._touchmove.bind(this), 50);
+    this.touchstart = this._touchstart.bind(this);
+    this.mouseup = this._mouseup.bind(this);
+    this.mousedown = this._mousedown.bind(this);
     this.dragging = false;
   }
 
-  clear(){
+  destroy(){
     this.toggle_handlers(false);
-    super.clear();
+    super.destroy();
   }
 
   with_colour(colour, callback){
@@ -94,16 +97,18 @@ class DraggableRectangle extends Rectangle {
   }
 
   toggle_handlers(on) {
-    const method = on ? this.canvas.addEventListener : this.canvas.removeEventListener;
+    const method = on ? this.orig_canvas.addEventListener.bind(this.orig_canvas) :
+      this.orig_canvas.removeEventListener.bind(this.orig_canvas);
+
     // Handling touch events
-    method('touchstart', this.touchstart.bind(this), false);
-    method('touchmove', this.throttled_touchmove.bind(this));
+    method.call(this.orig_canvas, 'touchstart', this.touchstart, false);
+    method.call(this.orig_canvas, 'touchmove', this.touchmove);
 
     // Handling mouse events
-    method('mousedown', this.mousedown.bind(this), false);
-    method('mousemove', this.throttled_mousemove.bind(this));
+    method.call(this.orig_canvas, 'mousedown', this.mousedown, false);
+    method.call(this.orig_canvas, 'mousemove', this.mousemove);
 
-    method('mouseup', this.mouseup.bind(this));
+    method.call(this.orig_canvas, 'mouseup', this.mouseup);
   }
 
   select(point) {
@@ -127,7 +132,7 @@ class DraggableRectangle extends Rectangle {
     //No-op
   }
 
-  mouseup(event) {
+  _mouseup(event) {
     event.preventDefault();
     this.p.x = event.pageX;
     this.p.y = event.pageY;
@@ -139,7 +144,7 @@ class DraggableRectangle extends Rectangle {
     }
   }
 
-  mousedown(event) {
+  _mousedown(event) {
     event.preventDefault();
     this.p.x = event.pageX;
     this.p.y = event.pageY;
@@ -147,7 +152,7 @@ class DraggableRectangle extends Rectangle {
     this.dragging = this.is_active;
   }
 
-  touchstart(event) {
+  _touchstart(event) {
     event.preventDefault();
     if (event.targetTouches.length == 1) {
       const touch = event.targetTouches[0];
@@ -158,7 +163,7 @@ class DraggableRectangle extends Rectangle {
     }
   }
 
-  touchmove(event) {
+  _touchmove(event) {
     event.preventDefault();
     if (event.targetTouches.length == 1) {
       const touch = event.targetTouches[0];
@@ -171,16 +176,11 @@ class DraggableRectangle extends Rectangle {
     }
   }
 
-  mousemove(event) {
+  _mousemove(event) {
     event.preventDefault();
     this.p.x = event.pageX;
     this.p.y = event.pageY;
     if(!this.dragging){
-      if(this.hit(this.p)){
-        document.body.classList.add("grabbing");
-      }else{
-        document.body.classList.remove("grabbing");
-      }
       return;
     }
     this.move(this.p);
@@ -199,7 +199,7 @@ class DragHandle extends DraggableRectangle {
       y: y,
       width: size,
       height: size,
-      canvas: rect.canvas
+      canvas: rect.orig_canvas
     });
     this.clamp_x = clamp_x;
     this.clamp_y = clamp_y;
@@ -259,7 +259,9 @@ class ResizableDraggableRectangle extends DraggableRectangle {
   }
 
   clear(){
-    this.clear_drag_handles();
+    if(this.dragging){
+      this.clear_drag_handles();
+    }
     super.clear();
   }
 
@@ -278,21 +280,22 @@ class ResizableDraggableRectangle extends DraggableRectangle {
   clear_drag_handles(){
     this.drag_handles.forEach(function(drag_handle){
       drag_handle.clear();
+      drag_handle.toggle_handlers(false);
     });
   }
 
-  unset_active(){
-    this.is_active = false;
-    this.clear();
-    this.draw();
-  }
-
   set_active(){
+    this.dispatch_event();
     this.is_active = true;
     this.clear();
     this.with_colour("red", function(){
       this.draw();
       this.draw_drag_handles();
     }.bind(this));
+  }
+
+  dispatch_event(){
+    const active_event = new CustomEvent('active', { detail: this });
+    this.orig_canvas.dispatchEvent(active_event);
   }
 }

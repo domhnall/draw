@@ -61,6 +61,16 @@ window.SHAPE =(function(s){
         }
       }
     });
+
+    // Switching between active rectangles
+    canvas.addEventListener('active', function(event){
+      const active_rect = event.detail;
+      all_rectangles.forEach(function(rect){
+        if(rect!==active_rect){
+          rect.destroy_drag_handles();
+        }
+      });
+    });
   }
 
   return s;

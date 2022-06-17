@@ -16,12 +16,18 @@ window.PAGE = (function(page){
     $reset_btn.addEventListener("click", function(e){
       if(confirm("This will completely clear your work on the canvas. You cannot undo. Are you sure?")){
         page.ctx.clearRect(0, 0, page.canvas.width, page.canvas.height);
+        document.querySelectorAll("canvas").forEach(function($canvas){
+          if($canvas.getAttribute("id")!==page.canvas.getAttribute("id")){
+            $canvas.parentNode.removeChild($canvas);
+          }
+        });
       }
     });
 
+    // Clicking anywhere outstide of canvas should deactivate currently active tool
     document.getElementById("tool_wrapper").addEventListener("click", function(event){
       const $target = event.target;
-      if(page.canvas.contains($target)){
+      if(page.canvas.parentNode.contains($target)){
         return;
       }
       // Disable active buttons
@@ -31,7 +37,6 @@ window.PAGE = (function(page){
         }
       });
     });
-
   };
 
 
@@ -50,6 +55,12 @@ window.PAGE = (function(page){
     if(typeof window.PENCIL !== "undefined"){
       window.PENCIL.init(page.ctx);
     }
+    if(typeof window.ERASER !== "undefined"){
+      window.ERASER.init(page.ctx);
+    }
+    if(typeof window.SHAPE !== "undefined"){
+      window.SHAPE.init(page.ctx);
+    }
   };
 
   return page;
@@ -61,19 +72,19 @@ window.Point = class Point {
     this.x = x;
     this.y = y;
     this.canvas = canvas;
-    this.css_width = window.getComputedStyle(PAGE.canvas, null)
+    this.css_width = window.getComputedStyle(canvas, null)
       .getPropertyValue("width")
       .replace(/px$/, '');
-    this.css_height = window.getComputedStyle(PAGE.canvas, null)
+    this.css_height = window.getComputedStyle(canvas, null)
       .getPropertyValue("height")
       .replace(/px$/, '');
   }
 
   get canvas_position() {
-    const client_rect = this.canvas.getBoundingClientRect();
-    return {
-      left: this.canvas.offsetParent.offsetLeft,
-      top: this.canvas.offsetParent.offsetTop
+    const $offset_parent = this.canvas.offsetParent;
+    return this._canvas_position ||= {
+      left: $offset_parent ? $offset_parent.offsetLeft : 30,
+      top: $offset_parent ? $offset_parent.offsetTop : 8
     };
   }
 

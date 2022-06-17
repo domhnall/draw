@@ -130,3 +130,6 @@ button, input[type=file] {
 .btn.tool-btn .hand_pointer {
   transform: rotate(-0.125turn);
 }
+.btn.tool-btn .erase_rect {
+  transform: rotate(-0.125turn);
+}

@@ -81,18 +81,12 @@ window.ERASER =(function(e){
     // Initialize touch point state
     p = new Point(0, 0, canvas)
 
-    document.getElementById("erase_tool_btn").addEventListener("click", function(e){
-      const $target = e.target,
-        active = (e.target.dataset.active==="true");
-
-      document.querySelectorAll("#control_panel .tool-btn[data-active=\"true\"]").forEach(function($btn){
-        if($btn!==$target){
-          $btn.click();
-        }
-      });
+    document.getElementById("erase_tool_btn").addEventListener("click", throttle(function(e){
+      const $target = e.target.closest(".tool-btn"),
+        active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_erasing_handlers(!active);
-    });
+    }, 50));
   }
 
   return e;

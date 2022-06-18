@@ -62,7 +62,7 @@ window.ERASER =(function(e){
   };
 
   const toggle_erasing_handlers = function(on) {
-    const method = on ? canvas.addEventListener : canvas.removeEventListener;
+    const method = on ? canvas.addEventListener.bind(canvas) : canvas.removeEventListener.bind(canvas);
 
     // Handling touch events
     method('touchstart', touchstart, false);

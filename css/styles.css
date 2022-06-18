@@ -17,8 +17,11 @@
   position: relative;
 }
 
+#draw_panel_wrapper canvas{
+  pointer-events: none;
+}
 canvas#draw_panel {
-  z-index: 1;
+  pointer-events: auto;
   touch-action: none;
 }
 

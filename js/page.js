@@ -50,6 +50,9 @@ window.PAGE = (function(page){
     if(typeof window.PENCIL !== "undefined"){
       window.PENCIL.init(page.ctx);
     }
+    if(typeof window.ERASER !== "undefined"){
+      window.ERASER.init(page.ctx);
+    }
   };
 
   return page;

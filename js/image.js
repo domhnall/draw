@@ -1,8 +1,7 @@
 window.IMAGE = (function(i){
   let canvas = null,
     ctx = null,
-    img_input = null,
-    export_button = null;
+    img_input = null;
 
   i.init = function(context){
     ctx = context;
@@ -15,16 +14,36 @@ window.IMAGE = (function(i){
     return (Math.random() + 1).toString(36).substring(7);
   };
 
+
+  const set_up_temp_canvas_for_export = function(){
+    const $temp_canvas = document.createElement('canvas'),
+        $temp_ctx = $temp_canvas.getContext('2d');
+    $temp_canvas.width = window.getComputedStyle(canvas, null)
+      .getPropertyValue("width")
+      .replace(/px$/, '');
+    $temp_canvas.height = window.getComputedStyle(canvas, null)
+      .getPropertyValue("height")
+      .replace(/px$/, '');
+    document.body.appendChild($temp_canvas);
+    canvas.parentNode.querySelectorAll("canvas").forEach(function($canvas){
+      $temp_ctx.drawImage($canvas, 0, 0);
+    });
+    return $temp_canvas;
+  };
+
   const init_export_button = function(){
-    export_button = document.getElementById("export");
+    const export_button = document.getElementById("export");
     export_button.addEventListener("click", function(e){
-      const $link = document.createElement('a');
-      $link.href = "" + canvas.toDataURL('image/png');
+      const $temp_canvas = set_up_temp_canvas_for_export(),
+        $link = document.createElement('a');
+
+      $link.href = "" + $temp_canvas.toDataURL('image/png');
       $link.download = `vector-logic-${random()}.png`;
       $link.style.display = "none";
       document.body.appendChild($link);
       $link.click();
       document.body.removeChild($link);
+      document.body.removeChild($temp_canvas);
     });
   };
 

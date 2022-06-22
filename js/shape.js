@@ -4,13 +4,16 @@ window.SHAPE =(function(s){
     canvas = null,
     p = null,
     all_rectangles = [],
-    shifted = false;
+    handle_margin_px = 7,
+    handle_size_px = 6;
 
   const drop_rect = function(point){
     let rect = new ResizableDraggableRectangle({
       x: point.canvas_x,
       y: point.canvas_y,
-      canvas: canvas })
+      canvas: canvas,
+      handle_margin: handle_margin_px,
+      handle_size: handle_size_px});
     all_rectangles.push(rect.draw());
   };
 
@@ -61,6 +64,12 @@ window.SHAPE =(function(s){
         }
       }
     });
+
+    document.addEventListener('touchstart', function on_first_touch() {
+      handle_margin_px = 14;
+      handle_size_px = 10;
+      document.removeEventListener('touchstart', on_first_touch, false);
+    }, false);
 
     // Switching between active rectangles
     canvas.addEventListener('active', function(event){

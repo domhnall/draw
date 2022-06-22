@@ -69,6 +69,37 @@
             <button class="btn tool-btn" id="erase_tool_btn" data-active="false"><div class="erase_rect">&#x25AD;</div></button>
             <button class="btn tool-btn" id="rect_tool_btn" data-active="false">&#x229E;</button>
             <button class="btn tool-btn" id="selector_tool_btn" data-active="false"><div class="hand_pointer">&#x261E;</div></button>
+            <button class="btn tool-btn" id="text_tool_btn" data-active="false">T</button>
+          </div>
+          <div id="text-controls" class="control_option" style="display: none">
+            <label>
+              <div>Size:</div>
+              <select name="font_size" id="font_size">
+                <option value="x-small">XS</option>
+                <option value="small">S</option>
+                <option value="medium">M</option>
+                <option value="large">L</option>
+                <option value="x-large">XL</option>
+              </select>
+            </label>
+            <label>
+              <div>Colour:</div>
+              <select name="font_colour" id="font_colour">
+                <option value="black">Black</option>
+                <option value="white">White</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+              </select>
+            </label>
+            <label>
+              <div>Background:</div>
+              <select name="background_colour" id="background_colour">
+                <option value="black">Black</option>
+                <option value="white">White</option>
+                <option value="transparent">Transparent</option>
+              </select>
+            </label>
           </div>
         </div>
 
@@ -92,5 +123,6 @@
     <script src="js/pencil.js"></script>
     <script src="js/rectangle.js"></script>
     <script src="js/shape.js"></script>
+    <script src="js/text.js"></script>
   </body>
 </html>

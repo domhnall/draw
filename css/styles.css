@@ -141,6 +141,11 @@ button, input[type=file] {
 .btn.tool-btn .erase_rect {
   transform: rotate(-0.125turn);
 }
+#text-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
 @media only screen and (max-width: 600px) {
   #tool_wrapper {
@@ -175,4 +180,39 @@ button, input[type=file] {
     min-width: 40%;
     flex: 0;
   }
+}
+
+[contenteditable] {
+  font-size: 26px;
+  padding: .25em 0em;
+  margin: 1em 0;
+  transition: padding .3s ease-in-out;
+  min-width: 5rem;
+  min-height: 1rem;
+  background: white;
+  border: 1px solid lightgrey;
+}
+[contenteditable] .destroy {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  border-radius: 50%;
+}
+[contenteditable] .destroy:hover {
+  cursor: pointer;
+}
+
+[contenteditable]:hover,
+[contenteditable]:focus {
+  padding: .25em;
+}
+
+[contenteditable]:hover {
+  background: #fafafa;
+  outline: 2px solid #eee;
+}
+
+[contenteditable]:focus {
+  background: #efefef;
+  outline: 2px solid blue;
 }

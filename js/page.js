@@ -70,6 +70,9 @@ window.PAGE = (function(page){
     if(typeof window.SHAPE !== "undefined"){
       window.SHAPE.init(page.ctx);
     }
+    if(typeof window.TEXT !== "undefined"){
+      window.TEXT.init(page.ctx);
+    }
   };
 
   return page;

@@ -188,7 +188,7 @@ class DraggableRectangle extends Rectangle {
   }
 }
 
-class DragHandle extends DraggableRectangle {
+class ResizeHandle extends DraggableRectangle {
   constructor({x, y, size=6, rect, clamp_x, clamp_y, drag_direction=1}={}) {
     super({
       x: x,
@@ -219,32 +219,31 @@ class DragHandle extends DraggableRectangle {
     this.rect.height = this.rect.height+this.drag_direction*(this.y-y_orig);
     this.rect.clear();
     this.rect.draw();
-    //this.rect.draw_drag_handles();
   }
 
   move_end(point){
-    this.rect.draw_drag_handles();
+    this.rect.draw_resize_handles();
   }
 }
 
 class ResizableDraggableRectangle extends DraggableRectangle {
   constructor({x, y, width, height, canvas, handle_size=6, handle_margin=7}={}) {
     super({x: x, y: y, width: width, height: height, canvas: canvas});
-    this.drag_handles = [];
+    this.resize_handles = [];
     this.handle_size = handle_size;
     this.handle_margin = handle_margin;
   }
 
-  draw_drag_handles(){
+  draw_resize_handles(){
     const that = this;
-    this.destroy_drag_handles();
-    this.drag_handles = [
+    this.destroy_resize_handles();
+    this.resize_handles = [
       [this.x, this.y-this.height/2-this.handle_margin, function(x){ return that.x; }, function(y){ return Math.min(y, that.y); }, -1],
       [this.x, this.y+this.height/2+this.handle_margin, function(x){ return that.x; }, function(y){ return Math.max(y, that.y); }, +1],
       [this.x-this.width/2-this.handle_margin, this.y, function(x){ return Math.min(x, that.x); }, function(y){ return that.y; }, -1],
       [this.x+this.width/2+this.handle_margin, this.y, function(x){ return Math.max(x, that.x); }, function(y){ return that.y; }, +1]
     ].map(function(args){
-      return new DragHandle({
+      return new ResizeHandle({
         x: args[0],
         y: args[1],
         clamp_x: args[2],
@@ -258,27 +257,27 @@ class ResizableDraggableRectangle extends DraggableRectangle {
 
   clear(){
     if(this.dragging){
-      this.clear_drag_handles();
+      this.clear_resize_handles();
     }
     super.clear();
   }
 
   destroy(){
-    this.destroy_drag_handles();
+    this.destroy_resize_handles();
     super.destroy();
   }
 
-  destroy_drag_handles(){
-    this.drag_handles.forEach(function(drag_handle){
-      drag_handle.destroy();
+  destroy_resize_handles(){
+    this.resize_handles.forEach(function(resize_handle){
+      resize_handle.destroy();
     });
-    this.drag_handles = [];
+    this.resize_handles = [];
   }
 
-  clear_drag_handles(){
-    this.drag_handles.forEach(function(drag_handle){
-      drag_handle.clear();
-      drag_handle.toggle_handlers(false);
+  clear_resize_handles(){
+    this.resize_handles.forEach(function(resize_handle){
+      resize_handle.clear();
+      resize_handle.toggle_handlers(false);
     });
   }
 
@@ -288,7 +287,7 @@ class ResizableDraggableRectangle extends DraggableRectangle {
     this.clear();
     this.with_colour("red", function(){
       this.draw();
-      this.draw_drag_handles();
+      this.draw_resize_handles();
     }.bind(this));
   }
 

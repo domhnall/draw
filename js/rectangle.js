@@ -211,7 +211,6 @@ class ResizeHandle extends DraggableRectangle {
     const x_orig = this.x, y_orig = this.y;
     this.x = this.clamp_x(point.canvas_x);
     this.y = this.clamp_y(point.canvas_y);
-    this.draw({fill: true});
     // Work out new dimensions of rect based on movement of drag handle
     this.rect.x = this.rect.x+0.5*(this.x-x_orig);
     this.rect.y = this.rect.y+0.5*(this.y-y_orig);

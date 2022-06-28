@@ -55,8 +55,16 @@ window.IMAGE = (function(i){
       horizontal_offset = ( canvas.width - image.width*ratio ) / 2,
       vertical_offset = ( canvas.height - image.height*ratio ) / 2;
 
-    context.drawImage(image, 0, 0, image.width, image.height,
-      horizontal_offset, vertical_offset, image.width*ratio, image.height*ratio);
+    context.drawImage(
+      image, // Reference to Image
+      0, // Source origin x
+      0, // Source origin y
+      image.width, // Source width to include
+      image.height, // Source height to include
+      horizontal_offset, // Destination x coordinate on canvas
+      vertical_offset, // Destination y coordinate on canvas
+      image.width*ratio, // Width on canvas
+      image.height*ratio); // Height on canvas
   };
 
   const init_file_upload_handlers = function(){

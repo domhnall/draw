@@ -76,7 +76,7 @@ window.SHAPE =(function(s){
       const active_rect = event.detail;
       all_rectangles.forEach(function(rect){
         if(rect!==active_rect){
-          rect.destroy_drag_handles();
+          rect.destroy_resize_handles();
         }
       });
     });

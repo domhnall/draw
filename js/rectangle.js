@@ -30,18 +30,28 @@ class Rectangle {
       this.ctx = this.canvas.getContext("2d");
       this.ctx.lineWidth = this.orig_context.lineWidth;
       this.ctx.strokeStyle = this.orig_context.strokeStyle;
-      this.p = new Point(this.x, this.y, this.canvas);
+      this.p = new Point({ x: this.canvas_x, y: this.canvas_y, canvas: this.canvas });
     }
 
     // Draw rect with default size
     this.ctx.beginPath();
+    var p = new Point({canvas_x: this.x-this.width/2, canvas_y: this.y-this.height/2, canvas: this.canvas});
+
     this.ctx[fill ? 'fillRect' : 'strokeRect'](
       this.x-this.width/2,
       this.y-this.height/2,
       width || this.width,
       height || this.height
-    )
+    );
     return this;
+  }
+
+  top_left(){
+    return new Point({
+      canvas_x: this.x-this.width/2,
+      canvas_y: this.y-this.height/2,
+      canvas: this.canvas
+    });
   }
 
   destroy(){

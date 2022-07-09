@@ -23,9 +23,6 @@ window.PAGE = (function(page){
               $canvas.parentNode.removeChild($canvas);
             }
           });
-          //if(d.img_input){
-          //  d.img_input.value = null;
-          //}
         }
       });
 
@@ -80,10 +77,12 @@ window.PAGE = (function(page){
 
 // Point class to represent (x,y) and convert to canvas coordinates
 window.Point = class Point {
-  constructor(x, y, canvas) {
-    this.x = x;
-    this.y = y;
+  constructor({ x, y, canvas, canvas_x, canvas_y }) {
     this.canvas = canvas;
+    this._x = x;
+    this._y = y;
+    this._canvas_x = canvas_x
+    this._canvas_y = canvas_y;
     this.css_width = window.getComputedStyle(canvas, null)
       .getPropertyValue("width")
       .replace(/px$/, '');
@@ -100,12 +99,32 @@ window.Point = class Point {
     };
   }
 
+  set x(x) {
+    this._x = x;
+  }
+
+  set y(y) {
+    this._y = y;
+  }
+
+  get x(){
+    return this._x ||
+      (this._canvas_x*(this.css_width/this.canvas.width) + this.canvas_position.left);
+  }
+
+  get y() {
+    return this._y ||
+      (this._canvas_y*(this.css_height/this.canvas.height) + this.canvas_position.top);
+  }
+
   get canvas_x(){
-    return (this.x - this.canvas_position.left)*this.canvas.width/this.css_width;
+    return this._canvas_x ||
+      (this._x - this.canvas_position.left)*this.canvas.width/this.css_width;
   }
 
   get canvas_y(){
-    return (this.y - this.canvas_position.top)*this.canvas.height/this.css_height;
+    return this._canvas_y ||
+      (this._y - this.canvas_position.top)*this.canvas.height/this.css_height;
   }
 };
 

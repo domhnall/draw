@@ -85,6 +85,9 @@ window.IMAGE = (function(i){
           }
         }
       }
+      canvas.addEventListener('clear', function(event){
+        img_input.value = null;
+      });
     });
   };
 

@@ -23,6 +23,7 @@ window.PAGE = (function(page){
               $canvas.parentNode.removeChild($canvas);
             }
           });
+          page.canvas.dispatchEvent(new CustomEvent('clear'));
         }
       });
 

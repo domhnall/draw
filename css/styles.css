@@ -182,29 +182,37 @@ button, input[type=file] {
   }
 }
 
-[contenteditable] {
-  font-size: 26px;
-  padding: .25em 0em;
-  margin: 1em 0;
-  transition: padding .3s ease-in-out;
-  min-width: 5rem;
-  min-height: 1rem;
+.text-wrapper .destroy {
+  position: absolute;
+  top: -0.4rem;
+  left: -0.3rem;
+  font-size: small;
+  border-radius: 50%;
   background: white;
   border: 1px solid lightgrey;
+  font-family: 'Roboto', sans-serif;
+  z-index: 1;
 }
-[contenteditable] .destroy {
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  border-radius: 50%;
-}
-[contenteditable] .destroy:hover {
+
+.text-wrapper .destroy:hover {
   cursor: pointer;
+}
+
+.text-wrapper [contenteditable] {
+  display: inline-block;
+  width: auto;
+  white-space: nowrap;
+  font-size: 26px;
+  padding: 0.25rem;
+  margin: 0;
+  transition: padding .3s ease-in-out;
+  background: white;
+  border: 1px solid lightgrey;
 }
 
 [contenteditable]:hover,
 [contenteditable]:focus {
-  padding: .25em;
+  padding: .25rem;
 }
 
 [contenteditable]:hover {

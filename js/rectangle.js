@@ -21,17 +21,17 @@ class Rectangle {
   }
 
   draw({width=null, height=null, fill=false}={}) {
-    const that = this;
-    if(!this.canvas){
-      this.canvas = document.createElement("canvas");
-      this.canvas.width = this.orig_canvas.width;
-      this.canvas.height = this.orig_canvas.height;
-      this.orig_canvas.parentNode.insertBefore(this.canvas, this.orig_canvas.nextSibling);
-      this.ctx = this.canvas.getContext("2d");
-      this.ctx.lineWidth = this.orig_context.lineWidth;
-      this.ctx.strokeStyle = this.orig_context.strokeStyle;
-      this.p = new Point({ x: this.canvas_x, y: this.canvas_y, canvas: this.canvas });
-    }
+    this._init_canvas();
+    //if(!this.canvas){
+      //this.canvas = document.createElement("canvas");
+      //this.canvas.width = this.orig_canvas.width;
+      //this.canvas.height = this.orig_canvas.height;
+      //this.orig_canvas.parentNode.insertBefore(this.canvas, this.orig_canvas.nextSibling);
+      //this.ctx = this.canvas.getContext("2d");
+      //this.ctx.lineWidth = this.orig_context.lineWidth;
+      //this.ctx.strokeStyle = this.orig_context.strokeStyle;
+      //this.p = new Point({ x: this.canvas_x, y: this.canvas_y, canvas: this.canvas });
+    //}
 
     // Draw rect with default size
     this.ctx.beginPath();
@@ -43,6 +43,14 @@ class Rectangle {
       width || this.width,
       height || this.height
     );
+    if(this.is_active){
+      this.ctx.strokeRect(
+        this.x-this.width/2-2,
+        this.y-this.height/2-2,
+        (width || this.width) + 4,
+        (height || this.height) + 4
+      );
+    }
     return this;
   }
 
@@ -69,6 +77,20 @@ class Rectangle {
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
+
+  _init_canvas() {
+    if(this.canvas){
+      return;
+    }
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = this.orig_canvas.width;
+    this.canvas.height = this.orig_canvas.height;
+    this.orig_canvas.parentNode.insertBefore(this.canvas, this.orig_canvas.nextSibling);
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.lineWidth = this.orig_context.lineWidth;
+    this.ctx.strokeStyle = this.orig_context.strokeStyle;
+    this.p = new Point({ x: this.canvas_x, y: this.canvas_y, canvas: this.canvas });
+  }
 }
 
 class DraggableRectangle extends Rectangle {
@@ -87,11 +109,24 @@ class DraggableRectangle extends Rectangle {
     super.destroy();
   }
 
-  with_colour(colour, callback){
+  with_fill_colour(colour, callback){
+    var orig_colour = this.ctx.fillStyle;
+    this.ctx.fillStyle = colour;
+    callback();
+    this.ctx.fillStyle = orig_colour;
+  }
+
+  with_stroke_colour(colour, callback){
     var orig_colour = this.ctx.strokeStyle;
     this.ctx.strokeStyle = colour;
     callback();
     this.ctx.strokeStyle = orig_colour;
+  }
+
+  with_colour(colour, callback){
+    this.with_fill_colour(colour, function(){
+      this.with_stroke_colour(colour, callback);
+    }.bind(this));
   }
 
   unset_active(){
@@ -103,7 +138,7 @@ class DraggableRectangle extends Rectangle {
   set_active(){
     this.is_active = true;
     this.clear();
-    this.with_colour("red", this.draw.bind(this));
+    this.draw();
   }
 
   toggle_handlers(on) {
@@ -294,14 +329,16 @@ class ResizableDraggableRectangle extends DraggableRectangle {
     this.dispatch_event();
     this.is_active = true;
     this.clear();
-    this.with_colour("red", function(){
-      this.draw();
-      this.draw_resize_handles();
-    }.bind(this));
+    this.draw();
+    this.draw_resize_handles();
   }
 
   dispatch_event(){
     const active_event = new CustomEvent('active', { detail: this });
     this.orig_canvas.dispatchEvent(active_event);
+  }
+
+  move_end(point){
+    this.draw_resize_handles();
   }
 }

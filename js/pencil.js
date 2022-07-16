@@ -77,6 +77,18 @@ window.PENCIL = (function(pencil){
     method('mouseup', mouseup);
   };
 
+  const init_style_button_handlers = function(){
+    const $line_width_btn = document.getElementById("line_width"),
+      $line_colour_btn = document.getElementById("line_colour");
+
+    $line_width_btn.addEventListener("change", function(e){
+      ctx.lineWidth = e.target.value;
+    });
+    $line_colour_btn.addEventListener("change", function(e){
+      ctx.strokeStyle = e.target.value;
+    });
+  };
+
   pencil.init = function(context){
     ctx = context
     canvas = context.canvas
@@ -85,11 +97,13 @@ window.PENCIL = (function(pencil){
     p = new Point({x: 0, y: 0, canvas: canvas})
 
     document.getElementById("draw_tool_btn").addEventListener("click", function(e){
-      const $target = e.target,
+      const $target = e.target.closest(".tool-btn"),
         active = (e.target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_drawing_handlers(!active);
+      PAGE.toggle_context_menu($target, !active);
     });
+    init_style_button_handlers();
   };
 
   return pencil;

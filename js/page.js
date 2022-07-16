@@ -2,20 +2,27 @@ window.PAGE = (function(page){
   page.canvas = null,
   page.ctx = null;
 
+  page.toggle_context_menu = function($btn, active){
+    const targetId = $btn.dataset.target,
+      $reveal_target = document.getElementById(targetId),
+      $context_menu = document.getElementById("context-menu");
+
+    $context_menu.querySelectorAll(".control_option").forEach(function($menu){
+      $menu.style.display = "none";
+    });
+    if(active){
+      $reveal_target.style.display = "flex";
+    }else{
+      $reveal_target.style.display = "none";
+    }
+    $reveal_target.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+  };
+
   const init_global_button_handlers = function(){
-    const $line_width_btn = document.getElementById("line_width"),
-      $line_colour_btn = document.getElementById("line_colour"),
-      $reset_btn = document.getElementById("reset");
-
-    $line_width_btn.addEventListener("change", function(e){
-      page.ctx.lineWidth = e.target.value;
-    });
-    $line_colour_btn.addEventListener("change", function(e){
-      page.ctx.strokeStyle = e.target.value;
-    });
-
     ["touchstart", "click"].forEach(function(event_type){
-      $reset_btn.addEventListener(event_type, function(e){
+      document.getElementById("reset").addEventListener(event_type, function(e){
         if(confirm("This will completely clear your work on the canvas. You cannot undo. Are you sure?")){
           page.ctx.clearRect(0, 0, page.canvas.width, page.canvas.height);
           document.querySelectorAll("canvas").forEach(function($canvas){
@@ -30,7 +37,9 @@ window.PAGE = (function(page){
       // Click/tap anywhere outstide of canvas should deactivate currently active tool
       document.getElementById("tool_wrapper").addEventListener(event_type, function(event){
         const $target = event.target;
-        if(page.canvas.parentNode.contains($target)){
+
+        if(page.canvas.parentNode.contains($target) ||
+          $target.nodeName.toLowerCase()==="select") {
           return;
         }
         // Disable active buttons

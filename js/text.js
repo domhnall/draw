@@ -34,18 +34,6 @@ window.TEXT =(function(text){
     method.call(canvas, 'touchend', mouseup);
   };
 
-  const toggle_text_control_buttons = function(on) {
-    const $text_controls = document.getElementById("text-controls");
-    if(on){
-      $text_controls.style.display = "flex";
-    }else{
-      $text_controls.style.display = "none";
-    }
-    $text_controls.addEventListener("click", function(e){
-      e.stopPropagation();
-    });
-  };
-
   const init_text_style_handlers = function(){
     const $font_size_select = document.getElementById("font_size"),
       $font_colour_select = document.getElementById("font_colour"),
@@ -92,7 +80,7 @@ window.TEXT =(function(text){
         active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_text_handlers(!active);
-      toggle_text_control_buttons(!active);
+      PAGE.toggle_context_menu($target, !active);
     }, 50));
     init_text_style_handlers();
   }

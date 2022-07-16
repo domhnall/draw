@@ -135,6 +135,7 @@ class TextBox extends DraggableRectangle {
         canvas: this.canvas
       });
     this.with_fill_colour(this.font_colour, function(){
+      this.ctx.font = this.font_size + "px sans-serif";
       this.ctx.fillText(this.input.textContent, point.canvas_x, point.canvas_y);
     }.bind(this));
     this.text_box.style.display = "none";

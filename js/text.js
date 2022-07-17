@@ -12,15 +12,29 @@ window.TEXT =(function(text){
     event.preventDefault();
     p.x = event.pageX;
     p.y = event.pageY;
+    activate_or_create_text_box(p);
+  };
+
+  const touchend = function(event){
+    event.preventDefault();
+    if (event.changedTouches.length == 1) {
+      const touch = event.changedTouches[0];
+      p.x = touch.pageX;
+      p.y = touch.pageY;
+      activate_or_create_text_box(p);
+    }
+  };
+
+  const activate_or_create_text_box = function(point){
     for(let i=0, len=all_texts.length; i<len; i++){
-      if(all_texts[i].hit(p)){
+      if(all_texts[i].hit(point)){
         all_texts[i].set_focus();
         return;
       }
     }
     all_texts.push(new TextBox({
-      x: p.canvas_x,
-      y: p.canvas_y,
+      x: point.canvas_x,
+      y: point.canvas_y,
       canvas: canvas,
       font_colour: font_colour,
       font_size: font_size,
@@ -31,7 +45,7 @@ window.TEXT =(function(text){
   const toggle_text_handlers = function(on) {
     const method = on ? canvas.addEventListener : canvas.removeEventListener;
     method.call(canvas, 'mouseup', mouseup);
-    method.call(canvas, 'touchend', mouseup);
+    method.call(canvas, 'touchend', touchend);
   };
 
   const init_text_style_handlers = function(){

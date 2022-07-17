@@ -226,6 +226,7 @@ button, input[type=file] {
   white-space: nowrap;
   font-size: 26px;
   padding: 0.25rem;
+  font-family: sans-serif;
   margin: 0;
   transition: padding .3s ease-in-out;
   background: white;

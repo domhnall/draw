@@ -116,8 +116,9 @@ class TextBox extends DraggableRectangle {
     const old_width = this.width,
       old_height = this.height;
 
-    this.width = this.scaler.scale_to_canvas_horizontal(this.input.clientWidth);
+    this.width = this.scaler.scale_to_canvas_horizontal(this.input.clientWidth + 2*this.padding);
     this.height = this.scaler.scale_to_canvas_vertical(this.input.clientHeight);
+    console.log("width: " + this.width);
     this.x = this.x + (this.width-old_width)/2;
     this.y = this.y + (this.height-old_height)/2;
     if(event.inputType==="insertText" && event.data===null){

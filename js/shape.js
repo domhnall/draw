@@ -5,7 +5,9 @@ window.SHAPE =(function(s){
     p = null,
     all_rectangles = [],
     handle_margin_px = 7,
-    handle_size_px = 6;
+    handle_size_px = 6,
+    line_width = null,
+    line_colour = null;
 
   const drop_rect = function(point){
     let rect = new ResizableDraggableRectangle({
@@ -13,8 +15,12 @@ window.SHAPE =(function(s){
       y: point.canvas_y,
       canvas: canvas,
       handle_margin: handle_margin_px,
-      handle_size: handle_size_px});
+      handle_size: handle_size_px,
+      line_width: line_width,
+      line_colour: line_colour });
     all_rectangles.push(rect.draw());
+    document.getElementById("selector_tool_btn").click();
+    rect.set_active();
   };
 
   const shape_mouseup = function(event){
@@ -32,7 +38,41 @@ window.SHAPE =(function(s){
   const toggle_selector_handlers = function(on){
     all_rectangles.forEach(function(rect){
       rect.toggle_handlers(on);
+      if(!on) {
+        rect.unset_active();
+        if(rect["clear_resize_handles"]){
+          rect.clear_resize_handles();
+        }
+      }
     });
+  };
+
+  const init_style_button_handlers = function(){
+    const $line_width_btn = document.getElementById("rect_line_width"),
+      $line_colour_btn = document.getElementById("rect_line_colour");
+
+    $line_width_btn.addEventListener("change", function(e){
+      line_width = e.target.value;
+      all_rectangles.forEach(function(rect){
+        if(rect.is_active){
+          rect.ctx.lineWidth = line_width;
+          rect.draw();
+        }
+      });
+    });
+    $line_colour_btn.addEventListener("change", function(e){
+      line_colour = e.target.value;
+      all_rectangles.forEach(function(rect){
+        if(rect.is_active){
+          rect.ctx.strokeStyle = line_colour;
+          rect.draw();
+        }
+      });
+    });
+  };
+
+  s.add_rectangle = function(rect){
+    all_rectangles.push(rect);
   };
 
   s.init = function(context){
@@ -40,13 +80,14 @@ window.SHAPE =(function(s){
     canvas = context.canvas;
 
     // Initialize touch point state
-    p = new Point(0, 0, canvas)
+    p = new Point({ x: 0, y: 0, canvas: canvas })
 
     document.getElementById("rect_tool_btn").addEventListener("click", throttle(function(e){
       const $target = e.target.closest(".tool-btn"),
         active = ($target.dataset.active==="true");
       $target.dataset.active = !active;
       toggle_shape_handlers(!active);
+      PAGE.toggle_context_menu($target, !active);
     }, 50));
     document.getElementById("selector_tool_btn").addEventListener("click", throttle(function(e){
       const $target = e.target.closest(".tool-btn"),
@@ -71,11 +112,13 @@ window.SHAPE =(function(s){
       document.removeEventListener('touchstart', on_first_touch, false);
     }, false);
 
+    init_style_button_handlers();
+
     // Switching between active rectangles
     canvas.addEventListener('active', function(event){
       const active_rect = event.detail;
       all_rectangles.forEach(function(rect){
-        if(rect!==active_rect){
+        if(rect!==active_rect && rect.resize_handles){
           rect.destroy_resize_handles();
         }
       });

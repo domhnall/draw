@@ -1,11 +1,13 @@
 class Rectangle {
-  constructor({x, y, width=null, height=null, canvas}={}) {
+  constructor({x, y, width=null, height=null, canvas, line_width=null, line_colour=null}={}) {
     this.x = x;
     this.y = y;
     this.width = width || this.default_width;
     this.height = height || this.default_height;
     this.orig_canvas = canvas;
     this.orig_context = canvas.getContext('2d');
+    this.line_width = line_width || this.orig_context.lineWidth;
+    this.stroke_style = line_colour || this.orig_context.strokeStyle;
     this.canvas = null;
     this.ctx = null;
     this.is_active = false;
@@ -20,28 +22,66 @@ class Rectangle {
     return 1.681*(this.height || this.default_height);
   }
 
-  draw({width=null, height=null, fill=false}={}) {
-    const that = this;
-    if(!this.canvas){
-      this.canvas = document.createElement("canvas");
-      this.canvas.width = this.orig_canvas.width;
-      this.canvas.height = this.orig_canvas.height;
-      this.orig_canvas.parentNode.insertBefore(this.canvas, this.orig_canvas.nextSibling);
-      this.ctx = this.canvas.getContext("2d");
-      this.ctx.lineWidth = this.orig_context.lineWidth;
-      this.ctx.strokeStyle = this.orig_context.strokeStyle;
-      this.p = new Point(this.x, this.y, this.canvas);
-    }
+  with_fill_colour(colour, callback){
+    var orig_colour = this.ctx.fillStyle;
+    this.ctx.fillStyle = colour;
+    callback();
+    this.ctx.fillStyle = orig_colour;
+  }
 
+  with_stroke_colour(colour, callback){
+    var orig_colour = this.ctx.strokeStyle;
+    this.ctx.strokeStyle = colour;
+    callback();
+    this.ctx.strokeStyle = orig_colour;
+  }
+
+  with_line_width(line_width, callback){
+    var orig_line_width = this.ctx.lineWidth;
+    this.ctx.lineWidth = line_width;
+    callback();
+    this.ctx.lineWidth = orig_line_width;
+  }
+
+  with_colour(colour, callback){
+    this.with_fill_colour(colour, function(){
+      this.with_stroke_colour(colour, callback);
+    }.bind(this));
+  }
+
+  draw({width=null, height=null, fill=false}={}) {
+    this._init_canvas();
     // Draw rect with default size
     this.ctx.beginPath();
+    var p = new Point({canvas_x: this.x-this.width/2, canvas_y: this.y-this.height/2, canvas: this.canvas});
+
     this.ctx[fill ? 'fillRect' : 'strokeRect'](
       this.x-this.width/2,
       this.y-this.height/2,
       width || this.width,
       height || this.height
-    )
+    );
+    if(this.is_active){
+      this.with_stroke_colour("black", function(){
+        this.with_line_width(1, function(){
+          this.ctx.strokeRect(
+            this.x-this.width/2-2,
+            this.y-this.height/2-2,
+            (width || this.width) + 4,
+            (height || this.height) + 4
+          );
+        }.bind(this));
+      }.bind(this));
+    }
     return this;
+  }
+
+  top_left(){
+    return new Point({
+      canvas_x: this.x-this.width/2,
+      canvas_y: this.y-this.height/2,
+      canvas: this.canvas
+    });
   }
 
   destroy(){
@@ -59,11 +99,26 @@ class Rectangle {
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
+
+  _init_canvas() {
+    if(this.canvas){
+      return;
+    }
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = this.orig_canvas.width;
+    this.canvas.height = this.orig_canvas.height;
+    this.orig_canvas.parentNode.insertBefore(this.canvas, this.orig_canvas.nextSibling);
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.lineWidth = this.line_width;
+    this.ctx.strokeStyle = this.stroke_style;
+    this.p = new Point({ x: this.canvas_x, y: this.canvas_y, canvas: this.canvas });
+  }
 }
 
 class DraggableRectangle extends Rectangle {
   constructor({x, y, width, height, canvas}={}) {
-    super({x: x, y: y, width: width, height: height, canvas: canvas});
+    //super({x: x, y: y, width: width, height: height, canvas: canvas});
+    super(...arguments);
     this.mousemove = throttle(this._mousemove.bind(this), 50);
     this.touchmove = throttle(this._touchmove.bind(this), 50);
     this.touchstart = this._touchstart.bind(this);
@@ -77,12 +132,6 @@ class DraggableRectangle extends Rectangle {
     super.destroy();
   }
 
-  with_colour(colour, callback){
-    var orig_colour = this.ctx.strokeStyle;
-    this.ctx.strokeStyle = colour;
-    callback();
-    this.ctx.strokeStyle = orig_colour;
-  }
 
   unset_active(){
     this.is_active = false;
@@ -93,7 +142,7 @@ class DraggableRectangle extends Rectangle {
   set_active(){
     this.is_active = true;
     this.clear();
-    this.with_colour("red", this.draw.bind(this));
+    this.draw();
   }
 
   toggle_handlers(on) {
@@ -190,13 +239,7 @@ class DraggableRectangle extends Rectangle {
 
 class ResizeHandle extends DraggableRectangle {
   constructor({x, y, size=6, rect, clamp_x, clamp_y, drag_direction=1}={}) {
-    super({
-      x: x,
-      y: y,
-      width: size,
-      height: size,
-      canvas: rect.orig_canvas
-    });
+    super({...arguments[0], canvas: rect.orig_canvas, width: size, height: size});
     this.clamp_x = clamp_x;
     this.clamp_y = clamp_y;
     this.rect = rect;
@@ -227,7 +270,7 @@ class ResizeHandle extends DraggableRectangle {
 
 class ResizableDraggableRectangle extends DraggableRectangle {
   constructor({x, y, width, height, canvas, handle_size=6, handle_margin=7}={}) {
-    super({x: x, y: y, width: width, height: height, canvas: canvas});
+    super(...arguments)
     this.resize_handles = [];
     this.handle_size = handle_size;
     this.handle_margin = handle_margin;
@@ -284,14 +327,16 @@ class ResizableDraggableRectangle extends DraggableRectangle {
     this.dispatch_event();
     this.is_active = true;
     this.clear();
-    this.with_colour("red", function(){
-      this.draw();
-      this.draw_resize_handles();
-    }.bind(this));
+    this.draw();
+    this.draw_resize_handles();
   }
 
   dispatch_event(){
     const active_event = new CustomEvent('active', { detail: this });
     this.orig_canvas.dispatchEvent(active_event);
+  }
+
+  move_end(point){
+    this.draw_resize_handles();
   }
 }

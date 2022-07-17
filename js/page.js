@@ -2,20 +2,27 @@ window.PAGE = (function(page){
   page.canvas = null,
   page.ctx = null;
 
+  page.toggle_context_menu = function($btn, active){
+    const targetId = $btn.dataset.target,
+      $reveal_target = document.getElementById(targetId),
+      $context_menu = document.getElementById("context-menu");
+
+    $context_menu.querySelectorAll(".control_option").forEach(function($menu){
+      $menu.style.display = "none";
+    });
+    if(active){
+      $reveal_target.style.display = "flex";
+    }else{
+      $reveal_target.style.display = "none";
+    }
+    $reveal_target.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+  };
+
   const init_global_button_handlers = function(){
-    const $line_width_btn = document.getElementById("line_width"),
-      $line_colour_btn = document.getElementById("line_colour"),
-      $reset_btn = document.getElementById("reset");
-
-    $line_width_btn.addEventListener("change", function(e){
-      page.ctx.lineWidth = e.target.value;
-    });
-    $line_colour_btn.addEventListener("change", function(e){
-      page.ctx.strokeStyle = e.target.value;
-    });
-
     ["touchstart", "click"].forEach(function(event_type){
-      $reset_btn.addEventListener(event_type, function(e){
+      document.getElementById("reset").addEventListener(event_type, function(e){
         if(confirm("This will completely clear your work on the canvas. You cannot undo. Are you sure?")){
           page.ctx.clearRect(0, 0, page.canvas.width, page.canvas.height);
           document.querySelectorAll("canvas").forEach(function($canvas){
@@ -23,16 +30,16 @@ window.PAGE = (function(page){
               $canvas.parentNode.removeChild($canvas);
             }
           });
-          //if(d.img_input){
-          //  d.img_input.value = null;
-          //}
+          page.canvas.dispatchEvent(new CustomEvent('clear'));
         }
       });
 
       // Click/tap anywhere outstide of canvas should deactivate currently active tool
       document.getElementById("tool_wrapper").addEventListener(event_type, function(event){
         const $target = event.target;
-        if(page.canvas.parentNode.contains($target)){
+
+        if(page.canvas.parentNode.contains($target) ||
+          $target.nodeName.toLowerCase()==="select") {
           return;
         }
         // Disable active buttons
@@ -70,6 +77,9 @@ window.PAGE = (function(page){
     if(typeof window.SHAPE !== "undefined"){
       window.SHAPE.init(page.ctx);
     }
+    if(typeof window.TEXT !== "undefined"){
+      window.TEXT.init(page.ctx);
+    }
   };
 
   return page;
@@ -77,10 +87,12 @@ window.PAGE = (function(page){
 
 // Point class to represent (x,y) and convert to canvas coordinates
 window.Point = class Point {
-  constructor(x, y, canvas) {
-    this.x = x;
-    this.y = y;
+  constructor({ x, y, canvas, canvas_x, canvas_y }) {
     this.canvas = canvas;
+    this._x = x;
+    this._y = y;
+    this._canvas_x = canvas_x
+    this._canvas_y = canvas_y;
     this.css_width = window.getComputedStyle(canvas, null)
       .getPropertyValue("width")
       .replace(/px$/, '');
@@ -97,12 +109,32 @@ window.Point = class Point {
     };
   }
 
+  set x(x) {
+    this._x = x;
+  }
+
+  set y(y) {
+    this._y = y;
+  }
+
+  get x(){
+    return this._x ||
+      (this._canvas_x*(this.css_width/this.canvas.width) + this.canvas_position.left);
+  }
+
+  get y() {
+    return this._y ||
+      (this._canvas_y*(this.css_height/this.canvas.height) + this.canvas_position.top);
+  }
+
   get canvas_x(){
-    return (this.x - this.canvas_position.left)*this.canvas.width/this.css_width;
+    return this._canvas_x ||
+      (this._x - this.canvas_position.left)*this.canvas.width/this.css_width;
   }
 
   get canvas_y(){
-    return (this.y - this.canvas_position.top)*this.canvas.height/this.css_height;
+    return this._canvas_y ||
+      (this._y - this.canvas_position.top)*this.canvas.height/this.css_height;
   }
 };
 

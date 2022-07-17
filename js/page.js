@@ -38,8 +38,15 @@ window.PAGE = (function(page){
       document.getElementById("tool_wrapper").addEventListener(event_type, function(event){
         const $target = event.target;
 
-        if(page.canvas.parentNode.contains($target) ||
-          $target.nodeName.toLowerCase()==="select") {
+        if($target.classList.contains("menu-toggle")) {
+          const $checkbox = document.querySelector("#tool_wrapper input.menu-checkbox");
+          $checkbox.checked = !$checkbox.checked;
+          event.preventDefault();
+          return;
+        }
+
+        if( page.canvas.parentNode.contains($target) ||
+          $target.nodeName.toLowerCase()==="select" ) {
           return;
         }
         // Disable active buttons

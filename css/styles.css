@@ -1,3 +1,7 @@
+body {
+  background: #f0f0f0;
+}
+
 #tool_wrapper{
   display: flex;
   flex-direction: row-reverse;
@@ -15,6 +19,7 @@
   width: 80%;
   height: 90vh;
   position: relative;
+  background: white;
 }
 
 #draw_panel_wrapper canvas{
@@ -77,10 +82,16 @@ button, input[type=file] {
 .control_panel_section {
   margin: 0.5em 0;
   border-bottom: 1px dashed lightgrey;
+  font-family: sans-serif;
+}
+
+.control_panel_section:last-of-type {
+  border-bottom: none;
 }
 
 .control_panel_section h3 {
   margin: 0.25em;
+  text-align: center;
 }
 
 .control_option {

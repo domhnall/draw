@@ -117,8 +117,7 @@ class Rectangle {
 
 class DraggableRectangle extends Rectangle {
   constructor({x, y, width, height, canvas}={}) {
-    //super({x: x, y: y, width: width, height: height, canvas: canvas});
-    super(...arguments);
+    super({x, y, width, height, canvas});
     this.mousemove = throttle(this._mousemove.bind(this), 50);
     this.touchmove = throttle(this._touchmove.bind(this), 50);
     this.touchstart = this._touchstart.bind(this);
@@ -150,15 +149,14 @@ class DraggableRectangle extends Rectangle {
       this.orig_canvas.removeEventListener.bind(this.orig_canvas);
 
     // Handling touch events
-    method.call(this.orig_canvas, 'touchstart', this.touchstart, false);
-    method.call(this.orig_canvas, 'touchmove', this.touchmove);
-    method.call(this.orig_canvas, 'touchend', this.mouseup);
+    method('touchstart', this.touchstart, false);
+    method('touchmove', this.touchmove);
+    method('touchend', this.mouseup);
 
     // Handling mouse events
-    method.call(this.orig_canvas, 'mousedown', this.mousedown, false);
-    method.call(this.orig_canvas, 'mousemove', this.mousemove);
-
-    method.call(this.orig_canvas, 'mouseup', this.mouseup);
+    method('mousedown', this.mousedown, false);
+    method('mousemove', this.mousemove);
+    method('mouseup', this.mouseup);
   }
 
   select(point) {
@@ -239,7 +237,7 @@ class DraggableRectangle extends Rectangle {
 
 class ResizeHandle extends DraggableRectangle {
   constructor({x, y, size=6, rect, clamp_x, clamp_y, drag_direction=1}={}) {
-    super({...arguments[0], canvas: rect.orig_canvas, width: size, height: size});
+    super({x, y, canvas: rect.orig_canvas, width: size, height: size});
     this.clamp_x = clamp_x;
     this.clamp_y = clamp_y;
     this.rect = rect;
@@ -270,7 +268,7 @@ class ResizeHandle extends DraggableRectangle {
 
 class ResizableDraggableRectangle extends DraggableRectangle {
   constructor({x, y, width, height, canvas, handle_size=6, handle_margin=7}={}) {
-    super(...arguments)
+    super({x, y, width, height, canvas})
     this.resize_handles = [];
     this.handle_size = handle_size;
     this.handle_margin = handle_margin;

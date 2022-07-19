@@ -101,15 +101,14 @@ class DraggableRectangle extends Rectangle {
       this.orig_canvas.removeEventListener.bind(this.orig_canvas);
 
     // Handling touch events
-    method.call(this.orig_canvas, 'touchstart', this.touchstart, false);
-    method.call(this.orig_canvas, 'touchmove', this.touchmove);
-    method.call(this.orig_canvas, 'touchend', this.mouseup);
+    method('touchstart', this.touchstart, false);
+    method('touchmove', this.touchmove);
+    method('touchend', this.mouseup);
 
     // Handling mouse events
-    method.call(this.orig_canvas, 'mousedown', this.mousedown, false);
-    method.call(this.orig_canvas, 'mousemove', this.mousemove);
-
-    method.call(this.orig_canvas, 'mouseup', this.mouseup);
+    method('mousedown', this.mousedown, false);
+    method('mousemove', this.mousemove);
+    method('mouseup', this.mouseup);
   }
 
   select(point) {

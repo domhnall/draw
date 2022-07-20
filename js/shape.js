@@ -40,7 +40,7 @@ window.SHAPE =(function(s){
     canvas = context.canvas;
 
     // Initialize touch point state
-    p = new Point(0, 0, canvas)
+    p = new Point({x: 0, y: 0, canvas: canvas})
 
     document.getElementById("rect_tool_btn").addEventListener("click", throttle(function(e){
       const $target = e.target.closest(".tool-btn"),

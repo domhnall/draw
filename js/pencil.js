@@ -82,7 +82,7 @@ window.PENCIL = (function(pencil){
     canvas = context.canvas
 
     // Initialize touch point state
-    p = new Point(0, 0, canvas)
+    p = new Point({x: 0, y: 0, canvas: canvas})
 
     document.getElementById("draw_tool_btn").addEventListener("click", function(e){
       const $target = e.target,

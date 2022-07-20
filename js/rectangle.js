@@ -30,7 +30,7 @@ class Rectangle {
       this.ctx = this.canvas.getContext("2d");
       this.ctx.lineWidth = this.orig_context.lineWidth;
       this.ctx.strokeStyle = this.orig_context.strokeStyle;
-      this.p = new Point(this.x, this.y, this.canvas);
+      this.p = new Point({x: this.x, y: this.y, canvas: this.canvas});
     }
 
     // Draw rect with default size

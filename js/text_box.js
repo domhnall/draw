@@ -39,7 +39,7 @@ window.debounce = (callback, wait) => {
 //class TextBox extends ResizableDraggableRectangle {
 class TextBox extends DraggableRectangle {
   constructor({x, y, width, height, canvas, font_colour, font_size, background_colour}={}) {
-    super({x: x, y: y, width: width, height: height, canvas: canvas});
+    super({x, y, width, height, canvas});
     this.font_colour = font_colour;
     this.font_size = font_size;
     this.background_colour = background_colour;

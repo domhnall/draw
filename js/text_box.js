@@ -106,7 +106,7 @@ class TextBox extends DraggableRectangle {
     if(set_focus){
       $input.focus();
     }
-    $input.addEventListener("input", debounce(this._draw_text.bind(this), 1000), false);
+    $input.addEventListener("input", debounce(this.draw.bind(this), 1000), false);
     $input.addEventListener("input", this._resize_box.bind(this), false);
     $close_btn.addEventListener("click", this.destroy.bind(this), false);
     return $wrapper;

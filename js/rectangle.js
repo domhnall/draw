@@ -116,8 +116,8 @@ class Rectangle {
 }
 
 class DraggableRectangle extends Rectangle {
-  constructor({x, y, width, height, canvas}={}) {
-    super({x, y, width, height, canvas});
+  constructor({x, y, width, height, canvas, line_width, line_colour}={}) {
+    super({x, y, width, height, canvas, line_width, line_colour});
     this.mousemove = throttle(this._mousemove.bind(this), 50);
     this.touchmove = throttle(this._touchmove.bind(this), 50);
     this.touchstart = this._touchstart.bind(this);
@@ -267,8 +267,8 @@ class ResizeHandle extends DraggableRectangle {
 }
 
 class ResizableDraggableRectangle extends DraggableRectangle {
-  constructor({x, y, width, height, canvas, handle_size=6, handle_margin=7}={}) {
-    super({x, y, width, height, canvas})
+  constructor({x, y, width, height, canvas, line_width, line_colour, handle_size=6, handle_margin=7}={}) {
+    super({x, y, width, height, canvas, line_width, line_colour})
     this.resize_handles = [];
     this.handle_size = handle_size;
     this.handle_margin = handle_margin;
